@@ -17,5 +17,7 @@ namespace FinancialControlAPI.Entities
         public string Email { get; set; }
         [JsonIgnore]
         public List<Transaction>? Transactions { get; set; }
+
+        public bool IsDeleted { get; set; } 
     }
 }

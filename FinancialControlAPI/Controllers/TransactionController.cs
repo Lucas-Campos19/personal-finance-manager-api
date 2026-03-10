@@ -1,77 +1,80 @@
 ﻿using FinancialControlAPI.Data;
 using FinancialControlAPI.DTOs;
+using FinancialControlAPI.Entities;
+using FinancialControlAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FinancialControlAPI.Entities;
 
 namespace FinancialControlAPI.Controllers
 {
     [ApiController]
-    [Route("api/[contoller]")]
+    [Route("api/[controller]")]
     public class TransactionController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public TransactionController(AppDbContext context)
+        private readonly ITransactionService _transactionService;
+        public TransactionController(ITransactionService transactionService)
         {
-            _context = context;
-            
+            _transactionService = transactionService;  
         }
 
         [HttpPost]
-        public async Task <IActionResult> Create(CreateTransactionDto dto)
+        public async Task<IActionResult> Create(CreateTransactionDto dto)
         {
-            var userExists = await _context.Users.AnyAsync(u => u.Id == dto.UserId);
-
-            if (!userExists)
+            try
             {
-                return BadRequest("Usuário não encontrado.");
+                var transaction = await _transactionService.Create(dto);
+
+                return CreatedAtAction(nameof(GetById),
+                    new { id = transaction.Id },
+                    transaction);
             }
-
-            var transaction = new Transaction
+            catch (Exception ex)
             {
-                Descricao = dto.Descricao,
-                Valor = dto.Valor,
-                Tipo = dto.Tipo,
-                Data = dto.Data,
-                UserId = dto.UserId,
-            };
-
-            _context.Transactions.Add(transaction);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = transaction.Id }, transaction);
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var transaction = await _context.Transactions
-                .Include(t => t.User)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            var transaction = await _transactionService.GetById(id);    
 
-            if(transaction == null)
+            if (transaction == null)
             {
                 return NotFound();
             }
-            return Ok(transaction); 
+            return Ok(transaction);
         }
 
         [HttpGet("periodo")]
-        public async Task<IActionResult> FilterByPeriod([FromQuery] DateTime? inicio, [FromQuery]DateTime? fim)
+        public async Task<IActionResult> FilterByPeriod([FromQuery] DateTime inicio, [FromQuery] DateTime fim)
         {
-            if(inicio == null || fim == null)
+            if (inicio == null || fim == null)
             {
                 return BadRequest("As datas são obrigatórias");
             }
 
-            if(inicio > fim)
+            if (inicio > fim)
             {
                 return BadRequest("Data inicio não pode ser maior do que a data final");
             }
-
-            var datasFiltro = await _context.Transactions.Where(d => d.Data >= inicio.Value && d.Data <= fim.Value).OrderBy(d => d.Data).ToListAsync();
+            var datasFiltro = await _transactionService.FilterByPeriod(inicio, fim);
             return Ok(datasFiltro);
-            
+
+        }
+
+        [HttpGet("resumo")]
+        public async Task<IActionResult> GetResumo([FromQuery] DateTime? inicio, [FromQuery] DateTime? fim)
+        {
+            var resumo = await _transactionService.GetResumo(inicio, fim);
+            return Ok(resumo);
+        }
+
+        [HttpGet("estatisticas")]
+        public async Task<IActionResult> GetStatistics([FromQuery] DateTime ? inicio, [FromQuery] DateTime ? fim)
+        {
+            var estatistica = await _transactionService.GetStatistics(inicio, fim);
+            return Ok(estatistica);
         }
     }
 }

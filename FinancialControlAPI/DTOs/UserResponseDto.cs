@@ -8,5 +8,6 @@ namespace FinancialControlAPI.DTOs
         public string Nome { get; set; }
         public string Email { get; set; }   
         public List<TransactionDto> Transactions { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using FinancialControlAPI.Data;
+using FinancialControlAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args); // monta a estrutura da aplicação antes dela rodar
@@ -13,6 +14,9 @@ builder.Services.AddControllers(); // habilita controller
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer(); //permite que endpoints sejam descobertos automaticamente
 builder.Services.AddSwaggerGen(); // gera documentação OpenAPI automaticamente
+
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IUserService, UserService>();    
 
 var app = builder.Build(); // a aplicação é construida, essa linha finaliza o container monta o pipeline http prepara o servidor
 
