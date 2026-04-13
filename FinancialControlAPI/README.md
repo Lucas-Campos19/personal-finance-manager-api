@@ -1,88 +1,71 @@
-﻿Personal Finance Manager API
-📌 Descrição
+﻿# 💰 Personal Finance Manager API
 
-API REST desenvolvida em ASP.NET Core para gerenciamento de usuários e controle financeiro, permitindo cadastro de transações, filtragem por período e cálculo de dados financeiros.
+## 📌 Sobre o Projeto
 
-Projeto desenvolvido com foco em boas práticas de desenvolvimento backend, incluindo uso de DTOs, validação de dados, relacionamento entre entidades e integração com banco de dados SQL Server.
+API REST desenvolvida em ASP.NET Core para gerenciamento de usuários e controle financeiro.
 
-🛠 Tecnologias Utilizadas
+Permite o cadastro de transações, filtragem por período e geração de dados financeiros, seguindo boas práticas de desenvolvimento backend.
 
-• C#
+Este projeto foi desenvolvido com foco em arquitetura limpa, organização de código e preparação para cenários reais de mercado.
 
-• ASP.NET Core
+---
 
-• Entity Framework Core
+## 🚀 Funcionalidades
 
-• SQL Server
+- ✔ CRUD de Usuários
+- ✔ CRUD de Transações
+- ✔ Relacionamento entre Usuário e Transações (1:N)
+- ✔ Filtro de transações por período
+- ✔ Cálculo de resumo financeiro e estatísticas
+- ✔ Soft Delete de usuários
+- ✔ Tratamento global de erros (400, 404, 500)
 
-• LINQ
+---
 
-• Swagger (Swashbuckle)
+## 🧠 Diferenciais do Projeto
 
-📂 Estrutura do Projeto
+- ✔ Arquitetura em camadas (Controller → Service → Data)
+- ✔ Uso de DTOs para segurança e desacoplamento
+- ✔ Tratamento global de exceções com middleware
+- ✔ Uso de exceptions customizadas (NotFoundException)
+- ✔ Boas práticas REST (status codes e respostas padronizadas)
+- ✔ Código organizado e preparado para escalabilidade
 
-• Controllers → Responsáveis pelos endpoints da API
+---
 
-• Entities → Representação das tabelas do banco
+## 🛠 Tecnologias Utilizadas
 
-• DTOs → Objetos de transferência de dados
+- C#
+- ASP.NET Core
+- Entity Framework Core
+- SQL Server
+- LINQ
+- Swagger (Swashbuckle)
 
-• Data → Configuração do DbContext e conexão com banco
+---
 
-🚀 Funcionalidades Implementadas
+## 📂 Estrutura do Projeto
 
-• CRUD de Usuários
+- Controllers → Endpoints da API
+- Services → Regras de negócio
+- Entities → Modelos do banco
+- DTOs → Transferência de dados
+- Data → DbContext e conexão
 
-• CRUD de Transações
+---
 
-• Relacionamento entre Usuário e Transações
+## 💾 Banco de Dados
 
-• Filtro de transações por período
+SQL Server com Entity Framework Core e uso de migrations.
 
-• Validações com DataAnnotations
+---
 
-• Respostas HTTP adequadas (200, 201, 204, 400, 404)
-
-💾 Banco de Dados
-
-Banco de dados SQL Server configurado via Entity Framework Core com migrations.
-
-▶ Como Executar o Projeto
+## ▶ Como Executar
 
 1. Clonar o repositório
+2. Configurar a connection string no `appsettings.json`
+3. Executar:
 
-2. Configurar a connection string no appsettings.json
-
-3. Executar as migrations:
-
+```bash
 dotnet ef database update
-
-Rodar o projeto:
-
 dotnet run
-
-Acessar o Swagger:
-
-https://localhost:{porta}/swagger
-
-🧠 Conceitos Aplicados
-
-Durante o desenvolvimento deste projeto foram aplicados os seguintes conceitos:
-
-• Arquitetura REST para organização dos endpoints
-
-• Separação de responsabilidades (Controllers, Entities, DTOs, Data)
-
-• Uso de DTOs para evitar exposição direta das entidades
-
-• Relacionamento 1:N entre Usuário e Transações
-
-• Validação de dados com DataAnnotations
-
-• Migrations com Entity Framework Core
-
-• Injeção de Dependência (Dependency Injection)
-
-• Programação assíncrona com async/await
-
-• Boas práticas de retorno HTTP (200, 201, 204, 400, 404)

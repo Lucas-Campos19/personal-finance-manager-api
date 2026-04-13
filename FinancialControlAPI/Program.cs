@@ -1,4 +1,5 @@
 using FinancialControlAPI.Data;
+using FinancialControlAPI.Middleware;
 using FinancialControlAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,11 @@ builder.Services.AddSwaggerGen(); // gera documentação OpenAPI automaticamente
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();    
 
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
+builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build(); // a aplicação é construida, essa linha finaliza o container monta o pipeline http prepara o servidor
 
 // Configure the HTTP request pipeline.
@@ -28,6 +34,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler();
+
 app.UseHttpsRedirection(); // força redirecionamento de http para https
 
 app.UseAuthorization(); // ativa middleware de autorização
@@ -35,3 +43,4 @@ app.UseAuthorization(); // ativa middleware de autorização
 app.MapControllers(); // maperia rotas de api automaticamente, sem isso os endpoint não funcionariam
 
 app.Run(); // inicio da aplicaçaõ
+

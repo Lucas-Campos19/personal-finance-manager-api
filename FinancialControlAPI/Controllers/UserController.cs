@@ -18,7 +18,7 @@ namespace FinancialControlAPI.Controllers
        }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user) // criação do usuario, recebe o user no corpo da requisição
+        public async Task<IActionResult> Create(UserCreateDto user) // criação do usuario, recebe o user no corpo da requisição
         {
             var createdUser = await _userService.Create(user);
             return CreatedAtAction(
@@ -41,23 +41,19 @@ namespace FinancialControlAPI.Controllers
             var user = await _userService.GetById(id);
             if(user == null)
             {
-                return NotFound();
+                return NotFound("Usuario não encontrado");
             }
             return Ok(user);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, User user)
+        public async Task<IActionResult> Update(int id, UserUpdateDto user)
         {
-            if(id != user.Id) // proteção contra inconsistência
-            {
-                return BadRequest();
-            }
             var existingUser = await _userService.Update(id, user); // busca usuario existente
 
             if(existingUser == null)
             {
-                return NotFound();
+                return NotFound("Usuario não encontrado");
             }
             return NoContent(); // retorna status 204
         }
@@ -68,7 +64,7 @@ namespace FinancialControlAPI.Controllers
             var user = await _userService.SoftDelete(id); // busca usuario se não existir retorna 404
             if (user == false)
             {
-                return NotFound();
+                return NotFound("Usuario não encontrado");
             }
             return NoContent();
         }

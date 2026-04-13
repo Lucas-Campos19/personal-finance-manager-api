@@ -1,6 +1,7 @@
 ﻿using FinancialControlAPI.Data;
 using FinancialControlAPI.DTOs;
 using FinancialControlAPI.Entities;
+using FinancialControlAPI.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -14,9 +15,14 @@ namespace FinancialControlAPI.Services
         {
             _context = context;
         }
-        public async Task<UserResponseDto> Create(User user)
+        public async Task<UserResponseDto> Create(UserCreateDto userDto)
         {
-            _context.Users.Add(user); // marca como added e salva no banco
+            var user = new User
+            {
+                Nome = userDto.Nome,
+                Email = userDto.Email,
+            };
+            _context.Users.Add(user);// marca como added e salva no banco
             await _context.SaveChangesAsync();
             return new UserResponseDto
             {
@@ -31,11 +37,11 @@ namespace FinancialControlAPI.Services
             var user = await _context.Users.FindAsync(id); // busca usuario se não existir retorna 404
             if (user == null)
             {
-                return false;
+                throw new NotFoundException("Usuario não encontrado");
             }
             if(user.IsDeleted == true)
             {
-                return false;
+                throw new NotFoundException("Usuario não encontrado");
             }
             user.IsDeleted = true;
 
@@ -61,7 +67,7 @@ namespace FinancialControlAPI.Services
             var user = await _context.Users.Where(u => u.Id == id && u.IsDeleted == false).Include(u => u.Transactions).FirstOrDefaultAsync(u => u.Id == id);
             if(user == null)
             {
-                return null;
+                throw new NotFoundException("Usuario não encontrado");
             }
             var response = new UserResponseDto
             {
@@ -80,13 +86,18 @@ namespace FinancialControlAPI.Services
             return (response);
         }
 
-        public async Task<UserResponseDto> Update(int id, User user)
+        public async Task<UserResponseDto> Update(int id, UserUpdateDto user)
         {
             var existingUser = await _context.Users.FindAsync(id); // busca usuario existente
 
             if (existingUser == null)
             {
-                return null;
+                throw new NotFoundException("Usuario não encontrado");
+            }
+
+            if (existingUser.IsDeleted == true)
+            {
+                throw new NotFoundException("Usuario não encontrado");
             }
 
             existingUser.Nome = user.Nome; // atualiza propriedades manualmente, isso evita sobrescrever campos indesejados

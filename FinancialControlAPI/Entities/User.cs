@@ -14,6 +14,7 @@ namespace FinancialControlAPI.Entities
 
         [EmailAddress]
         [Required]
+        [MaxLength(150)]
         public string Email { get; set; }
         [JsonIgnore]
         public List<Transaction>? Transactions { get; set; }
